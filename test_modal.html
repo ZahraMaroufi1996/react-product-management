@@ -1,0 +1,136 @@
+return (
+    <>
+      <div className="container">
+        <div className="card">
+          <div className="card-body">
+            {products.length === 0 &&
+            <p>محصولی موجود نمی‌باشد، برای افزودن محصول جدید روی "افزودن محصول" در منوی سمت راست کلیک نمایید!</p>}
+            {products.length > 0 && <table className="table table-sm table-striped align-middle">
+              <thead>
+              <tr>
+                <th scope="col">
+                  نام محصول
+                </th>
+                <th scope="col">
+                  قیمت
+                </th>
+                <th scope="col">
+                  دسته‌بندی
+                </th>
+                <th scope="col">
+                  موجودی
+                </th>
+                <th scope="col"/>
+              </tr>
+              </thead>
+              <tbody>
+              {products.map(product => <tr key={product.name}>
+                <td>{product.name}</td>
+                <td>{product.price}</td>
+                <td>{product.category}</td>
+                <td>{product.availability}</td>
+                <td>
+                  <div className="btn-group" role="group">
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => setIsOpen(true)}
+                    >
+                      حذف
+                    </button>
+                    <button type="button" className="btn btn-sm btn-outline-info">ویرایش</button>
+                  </div>
+                </td>
+              </tr>)}
+              </tbody>
+            </table>
+            }
+          </div>
+        </div>
+      </div>
+      <RemoveModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={() => setIsOpen(false)}/>
+    </>
+  );
+
+
+
+
+
+
+
+  //////////////////////////////
+  import { useEffect, useRef } from "react";
+import { Modal } from "bootstrap";
+import PropTypes from "prop-types";
+
+const RemoveModal = ({ product, onClose, onConfirm, isOpen }) => {
+  const modalObjectRef = useRef();
+  const modalRef = useRef();
+
+  const handleConfirm = (event) => {
+    onConfirm?.(event);
+  };
+
+  useEffect(() => {
+    modalObjectRef.current = new Modal(modalRef.current, {});
+
+    onClose && modalRef.current.addEventListener("hidden.bs.modal", onClose);
+  }, []);
+
+  useEffect(() => {
+    const modal = modalObjectRef.current;
+    if (isOpen) {
+      modal.show();
+    } else {
+      modal.hide();
+    }
+
+    return () => modal.hide();
+  }, [isOpen]);
+
+  return (
+    <div className="modal" tabIndex="-1" ref={modalRef}>
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">حذف کردن {product.name}</h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            />
+          </div>
+          <div className="modal-body">
+            <p>آیا از انجام این عمل مطمئن هستید!؟</p>
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+              onClick={onClose}
+            >
+              بیخیال
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={handleConfirm}
+            >
+              تایید
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+RemoveModal.propTypes = {
+  product: PropTypes.object.isRequired,
+  onConfirm: PropTypes.func,
+  onClose: PropTypes.func,
+};
+
+export { RemoveModal };

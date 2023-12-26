@@ -1,0 +1,11 @@
+{
+  "products": [
+    {
+      "id": "a56",
+      "name": "A56",
+      "price": 1500000,
+      "category": "موبایل",
+      "availability": 25
+    }
+  ]
+}
